@@ -22,8 +22,8 @@ A command-line e-voting platform implemented in Dart. This application provides 
 
 1. Clone the repository:
    ```
-   git clone https://github.com/yourusername/e_voting_platform.git
-   cd e_voting_platform
+   git clone https://github.com/qharny/e_voting.git
+   cd e_voting
    ```
 
 2. Install dependencies:

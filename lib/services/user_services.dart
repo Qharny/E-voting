@@ -1,53 +1,56 @@
-import 'package:dart_e_voting/models/candidate.dart';
-
 import '../models/user.dart';
-import '../utils/id_generator.dart';
+import '../models/candidate.dart';
 import 'storage_service.dart';
+import '../utils/id_generator.dart';
 
 class UserService {
-  final StorageService _storageService;
+  final StorageService _storage;
 
-  UserService(this._storageService);
+  UserService(this._storage);
 
-  Future<User> getOrCreateUser(String? userId) async {
-    if (userId == null || userId.isEmpty) {
-      final newUser = User(id: generateUniqueId());
-      await _storageService.saveUser(newUser);
-      return newUser;
-    }
-
-    final existingUser = await _storageService.getUser(userId);
-    if (existingUser != null) {
-      return existingUser;
-    } else {
-      final newUser = User(id: userId);
-      await _storageService.saveUser(newUser);
-      return newUser;
-    }
-  }
-
-  Future<List<Candidate>> getCandidates() async {
-    return await _storageService.getCandidates();
+  Future<User> registerUser(String name) async {
+    final users = await _storage.getUsers();
+    final newUser = User(
+      id: generateUniqueId(),
+      name: name,
+    );
+    users.add(newUser);
+    await _storage.saveUsers(users);
+    return newUser;
   }
 
   Future<bool> vote(String userId, String candidateId) async {
-    final user = await _storageService.getUser(userId);
-    if (user == null || user.hasVoted) {
+    final users = await _storage.getUsers();
+    final candidates = await _storage.getCandidates();
+
+    final userIndex = users.indexWhere((u) => u.id == userId);
+    if (userIndex == -1) {
+      print('User not found.');
       return false;
     }
 
-    final candidates = await getCandidates();
+    if (users[userIndex].hasVoted) {
+      print('You have already voted.');
+      return false;
+    }
+
     final candidateIndex = candidates.indexWhere((c) => c.id == candidateId);
     if (candidateIndex == -1) {
+      print('Candidate not found.');
       return false;
     }
 
+    users[userIndex].hasVoted = true;
     candidates[candidateIndex].votes++;
-    user.hasVoted = true;
 
-    await _storageService.saveCandidates(candidates);
-    await _storageService.saveUser(user);
+    await _storage.saveUsers(users);
+    await _storage.saveCandidates(candidates);
 
+    print('Vote cast successfully.');
     return true;
+  }
+
+  Future<List<Candidate>> getCandidates() async {
+    return await _storage.getCandidates();
   }
 }

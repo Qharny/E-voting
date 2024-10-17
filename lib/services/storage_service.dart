@@ -1,38 +1,37 @@
+import 'dart:io';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import '../models/candidate.dart';
 import '../models/user.dart';
 
 class StorageService {
-  late SharedPreferences _prefs;
-
-  Future<void> init() async {
-    _prefs = await SharedPreferences.getInstance();
-  }
+  static const String _candidatesFile = 'candidates.json';
+  static const String _usersFile = 'users.json';
 
   Future<List<Candidate>> getCandidates() async {
-    final candidatesJson = _prefs.getStringList('candidates') ?? [];
-    return candidatesJson
-        .map((json) => Candidate.fromJson(jsonDecode(json)))
-        .toList();
+    final file = File(_candidatesFile);
+    if (!await file.exists()) return [];
+    final content = await file.readAsString();
+    final candidatesList = jsonDecode(content) as List;
+    return candidatesList.map((c) => Candidate.fromJson(c)).toList();
   }
 
   Future<void> saveCandidates(List<Candidate> candidates) async {
-    final candidatesJson =
-        candidates.map((c) => jsonEncode(c.toJson())).toList();
-    await _prefs.setStringList('candidates', candidatesJson);
+    final file = File(_candidatesFile);
+    final content = jsonEncode(candidates.map((c) => c.toJson()).toList());
+    await file.writeAsString(content);
   }
 
-  Future<User?> getUser(String userId) async {
-    final userJson = _prefs.getString('user_$userId');
-    if (userJson != null) {
-      return User.fromJson(jsonDecode(userJson));
-    }
-    return null;
+  Future<List<User>> getUsers() async {
+    final file = File(_usersFile);
+    if (!await file.exists()) return [];
+    final content = await file.readAsString();
+    final usersList = jsonDecode(content) as List;
+    return usersList.map((u) => User.fromJson(u)).toList();
   }
 
-  Future<void> saveUser(User user) async {
-    await _prefs.setString('user_${user.id}', jsonEncode(user.toJson()));
+  Future<void> saveUsers(List<User> users) async {
+    final file = File(_usersFile);
+    final content = jsonEncode(users.map((u) => u.toJson()).toList());
+    await file.writeAsString(content);
   }
 }

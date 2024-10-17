@@ -1,20 +1,19 @@
 class User {
   final String id;
+  final String name;
   bool hasVoted;
 
-  User({required this.id, this.hasVoted = false});
+  User({required this.id, required this.name, this.hasVoted = false});
 
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'hasVoted': hasVoted,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'name': name,
+        'hasVoted': hasVoted,
+      };
 
-  factory User.fromJson(Map<String, dynamic> json) {
-    return User(
-      id: json['id'],
-      hasVoted: json['hasVoted'],
-    );
-  }
+  factory User.fromJson(Map<String, dynamic> json) => User(
+        id: json['id'],
+        name: json['name'],
+        hasVoted: json['hasVoted'],
+      );
 }

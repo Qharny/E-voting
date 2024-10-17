@@ -1,8 +1,13 @@
-import 'dart:math';
+// import 'dart:math';
+
+// String generateUniqueId() {
+//   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+//   final random = Random();
+//   return String.fromCharCodes(Iterable.generate(
+//       8, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+// }
+import 'package:uuid/uuid.dart';
 
 String generateUniqueId() {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-  final random = Random();
-  return String.fromCharCodes(Iterable.generate(
-      8, (_) => chars.codeUnitAt(random.nextInt(chars.length))));
+  return Uuid().v4();
 }
