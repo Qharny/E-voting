@@ -1,4 +1,5 @@
 import 'dart:io';
+
 import 'package:dart_e_voting/services/admin_services.dart';
 import 'package:dart_e_voting/services/storage_service.dart';
 import 'package:dart_e_voting/services/user_services.dart';
@@ -13,7 +14,8 @@ void main() async {
     print('\n--- E-Voting Platform ---');
     print('1. Admin');
     print('2. User');
-    print('3. Exit');
+    print('3. Print Results');
+    print('4. Exit');
     print('Enter your choice:');
 
     final choice = int.tryParse(stdin.readLineSync() ?? '');
@@ -26,6 +28,9 @@ void main() async {
         await userMenu(userService);
         break;
       case 3:
+        print(await adminService.getResults());
+        break;
+      case 4:
         print('Goodbye!');
         return;
       default:
@@ -39,7 +44,7 @@ Future<void> adminMenu(AdminService adminService) async {
     print('\n--- Admin Menu ---');
     print('1. Add Candidate');
     print('2. View Candidates');
-    print('3. Display Results');
+    print('3. Print Results');
     print('4. Back to Main Menu');
     print('Enter your choice:');
 
@@ -67,7 +72,7 @@ Future<void> adminMenu(AdminService adminService) async {
         }
         break;
       case 3:
-        await adminService.displayResults();
+        print(await adminService.getResults());
         break;
       case 4:
         return;
@@ -93,7 +98,8 @@ Future<void> userMenu(UserService userService) async {
     print('\n--- User Menu ---');
     print('1. View Candidates');
     print('2. Vote');
-    print('3. Back to Main Menu');
+    print('3. Print Results');
+    print('4. Back to Main Menu');
     print('Enter your choice:');
 
     final choice = int.tryParse(stdin.readLineSync() ?? '');
@@ -119,6 +125,9 @@ Future<void> userMenu(UserService userService) async {
         }
         break;
       case 3:
+        print(await userService.getResults());
+        break;
+      case 4:
         return;
       default:
         print('Invalid choice. Please try again.');

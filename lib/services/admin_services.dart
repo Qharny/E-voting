@@ -20,11 +20,15 @@ class AdminService {
     return await _storage.getCandidates();
   }
 
-  Future<void> displayResults() async {
+  Future<String> getResults() async {
     final candidates = await _storage.getCandidates();
-    print('\nElection Results:');
+    candidates.sort((a, b) => b.votes.compareTo(a.votes)); // Sort by votes in descending order
+    
+    StringBuffer result = StringBuffer('Election Results:\n');
     for (var candidate in candidates) {
-      print('${candidate.name}: ${candidate.votes} votes');
+      result.writeln('${candidate.name}: ${candidate.votes} votes');
     }
+    
+    return result.toString();
   }
 }
